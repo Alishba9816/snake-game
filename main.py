@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import time
+import random
 pygame.init()
 #Variables
 white=(255,255,255)
@@ -16,12 +17,18 @@ clock=pygame.time.Clock()
 font=pygame.font.Font(None, 25)
 
 
-def gameOver_message(msg, textcolor):
+def gameOver_message(msg, textcolor, position):
   text= font.render(msg, True, textcolor)
-  screen.blit(text, [10, screenHeight/2])
+  screen.blit(text, [10, position])
 
+
+def creating_prey(randx,randy,block_size):
+  pygame.draw.rect(screen, red,[randx,randy,block_size,block_size])
 
 def gameloop(gameStart): 
+  score =0
+  randx= round(random.randrange(0, screenWidth)/10)*10
+  randy= round(random.randrange(0, screenHeight)/10)*10
   gameOver=False
   movex=0
   movey=0
@@ -62,14 +69,23 @@ def gameloop(gameStart):
     #controlling fps
     clock.tick(fps)
     screen.fill(white)
+    pygame.draw.rect(screen, red,[randx,randy,block_size,block_size])
+    #creating snake
+    if x==randx and y==randy:
+      randx= round(random.randrange(0, screenWidth)/10)*10
+      randy= round(random.randrange(0, screenHeight)/10)*10
+      creating_prey(randx,randy,block_size)
+      score += 5
     pygame.draw.rect(screen, black,[x,y,block_size,block_size])
+    #creating prey
     pygame.display.update()
        #controlling game Over
     while gameOver==True:
       screen.fill(white)
       c += 1
       print(f'count{c}')
-      gameOver_message("Game Over! press c to continue and q to quit", red)
+      gameOver_message(f"Game Over! Your score is {score}", red, screenHeight/3 )
+      gameOver_message(f"Press c to continue/ q to quit", red, screenHeight/2 )
       pygame.display.update()
       for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
